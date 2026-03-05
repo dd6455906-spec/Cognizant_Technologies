@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognizant Technologies | Employee Portal</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --primary: #0056D2; 
+            --secondary: #00b359;
+            --glass: #ffffff;
+            --border: rgba(0, 0, 0, 0.1);
+            --text: #1a1a1a;
+            --text-dim: #666;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        body.dark-mode {
+            --bg: #0d0e12;
+            --primary: #00ff88;
+            --secondary: #60efff;
+            --glass: #1a1c23;
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s; }
+
+        body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
+        /* AUTH CARDS */
+        .auth-card { 
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
+            padding: 40px; width: 420px; box-shadow: var(--card-shadow); text-align: center; 
+            position: relative;
+        }
+        
+        .card-toggle {
+            position: absolute; top: 15px; right: 15px;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+        }
+
+        .brand-text { color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.75rem; margin-bottom: 10px; display: block; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
+        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-main:hover { filter: brightness(1.1); }
+
+        /* DASHBOARD NAV */
+        #dashboard { display: none; width: 100%; height: 100%; flex-direction: column; background: var(--bg); }
+        nav { 
+            padding: 0 30px; height: 70px; display: flex; justify-content: space-between; align-items: center; 
+            background: var(--glass); border-bottom: 1px solid var(--border);
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        
+        .tabs-bar { display: flex; background: var(--glass); border-bottom: 1px solid var(--border); justify-content: center; }
+        .tab-btn { padding: 15px 25px; cursor: pointer; font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .content-area { flex: 1; padding: 40px; overflow-y: auto; }
+        .tab-panel { display: none; max-width: 1000px; margin: 0 auto; }
+        .tab-panel.active { display: block; }
+
+        /* WIDGETS */
+        .grid-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
+        .widget { background: var(--glass); padding: 25px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+        
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; }
+        .day { background: var(--bg); aspect-ratio: 1; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; border: 1px solid var(--border); }
+        .dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 4px; }
+
+        /* PROFILE */
+        .user-pill { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 15px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
+        .avatar { width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
+
+        #profile-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: var(--glass); border: 1px solid var(--border);
+            border-radius: 20px; padding: 30px; display: none; z-index: 4000; text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 3500; }
+
+        .profile-details { text-align: left; margin: 20px 0; }
+        .profile-details p { margin-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .profile-details label { font-weight: bold; color: var(--text-dim); display: block; font-size: 0.75rem; text-transform: uppercase; }
+
+        .hidden { display: none !important; }
+        .task-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .session-info { font-size: 0.75rem; color: var(--text-dim); background: var(--bg); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); }
+    </style>
+</head>
+<body class="light-mode">
+
+    <div id="auth-ui">
+        <div id="login-box" class="auth-card">
+            <button class="card-toggle" onclick="toggleTheme()">🌙</button>
+            <span class="brand-text">COGNIZANT</span>
+            <h2>Associate Sign-In</h2>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">Secure Employee Access</p>
+            <input type="email" id="l-email" placeholder="Corporate Email">
+            <input type="password" placeholder="Password">
+            <button class="btn-main" onclick="handleAuth('Login')">Login</button>
+            <p style="margin-top:20px; font-size: 0.8rem;">New here? <span onclick="swapAuth()" style="color:var(--primary); cursor:pointer; font-weight:bold;">Register</span></p>
+        </div>
+
+        <div id="reg-box" class="auth-card hidden">
+            <button class="card-toggle" onclick="toggleTheme()">🌙</button>
+            <span class="brand-text">COGNIZANT</span>
+            <h2>Onboarding</h2>
+            <input type="text" id="r-name" placeholder="Full Name">
+            <input type="email" id="r-email" placeholder="Corporate Email">
+            <input type="password" placeholder="Password">
+            <button class="btn-main" onclick="handleAuth('Reg')">Join Portal</button>
+            <p style="margin-top:20px; font-size: 0.8rem;">Registered? <span onclick="swapAuth()" style="color:var(--primary); cursor:pointer; font-weight:bold;">Sign In</span></p>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        <nav>
+            <div style="font-weight: 800; color: var(--primary); font-size: 1.1rem;">COGNIZANT <span style="font-weight: 400; color: var(--text);">Technologies</span></div>
+            <div class="nav-right">
+                <div class="session-info" id="nav-time">--:--:--</div>
+                <button class="icon-btn" onclick="toggleTheme()" id="nav-theme-btn" style="border:none; background:none; cursor:pointer; font-size: 1.2rem;">🌙</button>
+                <div class="user-pill" onclick="toggleProfile()">
+                    <div class="avatar" id="avatar-init">U</div>
+                    <span id="user-name-label" style="font-weight: 600; font-size: 0.85rem;">User</span>
+                </div>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold; font-size: 0.8rem;">LOGOUT</button>
+            </div>
+        </nav>
+
+        <div class="tabs-bar">
+            <div class="tab-btn active" onclick="switchTab(event, 'main-view')">Overview</div>
+            <div class="tab-btn" onclick="switchTab(event, 'task-view')">Tasks</div>
+            <div class="tab-btn" onclick="switchTab(event, 'att-view')">Attendance</div>
+        </div>
+
+        <div class="content-area">
+            <div id="main-view" class="tab-panel active">
+                <h2 id="welcome-msg" style="margin-bottom: 25px;">Hello, Associate</h2>
+                <div class="grid-layout">
+                    <div class="widget">
+                        <h3>Task Snapshot</h3>
+                        <div id="task-summary" style="margin-top: 15px;">Add tasks in the Tasks tab to see them here.</div>
+                    </div>
+                    <div class="widget">
+                        <h3>Status</h3>
+                        <p style="margin-top: 10px;">ID: <span style="color:var(--primary)">#CTS-001</span></p>
+                        <p style="margin-top: 5px;">Status: <span style="color:var(--success)">Active</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="task-view" class="tab-panel">
+                <div class="widget">
+                    <h3>Personal Task Manager</h3>
+                    <div style="display: flex; gap: 10px; margin: 20px 0;">
+                        <input type="text" id="new-task-input" placeholder="Enter task..." style="margin:0;">
+                        <button class="btn-main" style="width: 120px; margin:0;" onclick="addNewTask()">Add</button>
+                    </div>
+                    <div id="full-task-list"></div>
+                </div>
+            </div>
+
+            <div id="att-view" class="tab-panel">
+                <div class="widget" style="max-width: 500px; margin: 0 auto;">
+                    <h3>Monthly Attendance</h3>
+                    <div class="calendar" id="cal-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleProfile()"></div>
+    <div id="profile-modal">
+        <div class="avatar" style="width: 60px; height: 60px; margin: 0 auto 15px; font-size: 1.5rem;" id="modal-avatar">U</div>
+        <h3 id="profile-title">Associate Profile</h3>
+        
+        <div class="profile-details">
+            <p><label>Name</label><span id="p-name">User Name</span></p>
+            <p><label>Employee ID</label><span id="p-id">#CTS-001</span></p>
+            <p><label>Email ID</label><span id="p-email">user@cognizant.com</span></p>
+            <p><label>Login Time</label><span id="p-login-time" style="color:var(--primary)">00:00 AM</span></p>
+        </div>
+
+        <button class="btn-main" onclick="toggleProfile()" style="background: var(--text-dim); margin-top: 10px;">Close</button>
+    </div>
+
+    <script>
+        let tasks = [];
+        let loginTimestamp = "";
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const icons = document.querySelectorAll('.card-toggle, #nav-theme-btn');
+            icons.forEach(i => i.innerText = isDark ? '☀️' : '🌙');
+        }
+
+        function swapAuth() {
+            document.getElementById('login-box').classList.toggle('hidden');
+            document.getElementById('reg-box').classList.toggle('hidden');
+        }
+
+        function handleAuth(type) {
+            const emailInput = type === 'Reg' ? document.getElementById('r-email').value : document.getElementById('l-email').value;
+            const nameInput = type === 'Reg' ? document.getElementById('r-name').value : emailInput.split('@')[0];
+
+            if(!emailInput.includes('@')) { alert("Enter valid email"); return; }
+
+            // Capture login time
+            const now = new Date();
+            loginTimestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            document.getElementById('auth-ui').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'flex';
+            
+            document.getElementById('welcome-msg').innerText = "Hello, " + nameInput;
+            document.getElementById('user-name-label').innerText = nameInput;
+            document.getElementById('avatar-init').innerText = nameInput.charAt(0).toUpperCase();
+            
+            // Populate Profile
+            document.getElementById('p-name').innerText = nameInput;
+            document.getElementById('p-email').innerText = emailInput;
+            document.getElementById('p-login-time').innerText = loginTimestamp;
+            document.getElementById('modal-avatar').innerText = nameInput.charAt(0).toUpperCase();
+
+            // Start clock
+            setInterval(() => {
+                document.getElementById('nav-time').innerText = new Date().toLocaleTimeString();
+            }, 1000);
+
+            generateAttendance();
+        }
+
+        function switchTab(e, tabId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            e.currentTarget.classList.add('active');
+        }
+
+        function addNewTask() {
+            const input = document.getElementById('new-task-input');
+            if(!input.value) return;
+            tasks.push(input.value);
+            input.value = "";
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const fullList = document.getElementById('full-task-list');
+            const summaryList = document.getElementById('task-summary');
+            fullList.innerHTML = "";
+            summaryList.innerHTML = tasks.length ? tasks.slice(0, 3).map(t => `• ${t}`).join('<br>') : "No tasks yet.";
+
+            tasks.forEach((task, index) => {
+                const item = document.createElement('div');
+                item.className = "task-item";
+                item.innerHTML = `<span>${task}</span><span onclick="removeTask(${index})" style="color:var(--danger); cursor:pointer;">✕</span>`;
+                fullList.appendChild(item);
+            });
+        }
+
+        function removeTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        function generateAttendance() {
+            const grid = document.getElementById('cal-grid');
+            grid.innerHTML = "";
+            for(let i=1; i<=30; i++) {
+                const day = document.createElement('div');
+                day.className = "day";
+                const present = Math.random() > 0.2;
+                day.innerHTML = `${i}<div class="dot" style="background:${present ? 'var(--success)' : 'var(--danger)'}"></div>`;
+                grid.appendChild(day);
+            }
+        }
+
+        function toggleProfile() {
+            const modal = document.getElementById('profile-modal');
+            const overlay = document.getElementById('overlay');
+            const isVisible = modal.style.display === 'block';
+            modal.style.display = isVisible ? 'none' : 'block';
+            overlay.style.display = isVisible ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
