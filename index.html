@@ -16,7 +16,7 @@
             --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
             --success: #28a745;
             --danger: #dc3545;
-            --holiday: #f39c12;
+            --holiday: #fd7e14;
         }
 
         body.dark-mode {
@@ -53,14 +53,15 @@
         .grid-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
         .widget { background: var(--glass); padding: 25px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--card-shadow); }
         
-        /* CALENDAR MODIFICATIONS */
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day { background: var(--bg); aspect-ratio: 1; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--border); position: relative; }
-        .day.today { border: 2px solid var(--primary); border-radius: 4px; }
+        /* CALENDAR STYLES */
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .nav-btn { background: none; border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px; }
+        .day-label { font-size: 0.7rem; color: var(--text-dim); text-align: center; font-weight: bold; margin-bottom: 5px; }
+        .day { background: var(--bg); aspect-ratio: 1; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; border: 1px solid var(--border); position: relative; }
+        .day.today { border: 2px solid var(--primary); border-radius: 2px; }
         .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; }
-        .cal-legend { display: flex; gap: 10px; font-size: 0.7rem; margin-top: 15px; justify-content: center; }
-        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .cal-legend { display: flex; gap: 15px; justify-content: center; margin-top: 20px; font-size: 0.75rem; color: var(--text-dim); }
 
         .user-pill { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 15px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
         .avatar { width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
@@ -151,15 +152,20 @@
 
             <div id="att-view" class="tab-panel">
                 <div class="widget" style="max-width: 500px; margin: 0 auto;">
-                    <div class="calendar-header">
-                        <h3 id="cal-month-year">Month Year</h3>
+                    <div class="calendar-nav">
+                        <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
+                        <h3 id="cal-display">Month Year</h3>
+                        <button class="nav-btn" onclick="changeMonth(1)">❯</button>
+                    </div>
+                    <div class="calendar" style="grid-template-rows: auto;">
+                        <div class="day-label">Sun</div><div class="day-label">Mon</div><div class="day-label">Tue</div>
+                        <div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div>
                     </div>
                     <div class="calendar" id="cal-grid"></div>
                     <div class="cal-legend">
-                        <div class="legend-item"><div class="dot" style="background:var(--success)"></div> Work</div>
-                        <div class="legend-item"><div class="dot" style="background:var(--danger)"></div> Leave</div>
-                        <div class="legend-item"><div class="dot" style="background:var(--holiday)"></div> Holiday</div>
-                        <div class="legend-item"><div style="width:10px; height:10px; border:1px solid var(--primary)"></div> Today</div>
+                        <span><span style="color:var(--success)">●</span> Present</span>
+                        <span><span style="color:var(--danger)">●</span> Leave</span>
+                        <span><span style="color:var(--holiday)">●</span> Holiday</span>
                     </div>
                 </div>
             </div>
@@ -185,6 +191,9 @@
         let users = JSON.parse(localStorage.getItem('cts_portal_users')) || [];
         let sharedTasks = JSON.parse(localStorage.getItem('cts_shared_tasks')) || ["Finalize Project Documentation", "Team Sync @ 2PM"];
         let currentUser = null;
+        
+        // Calendar State
+        let viewDate = new Date();
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
@@ -220,7 +229,6 @@
                 if (!found) { alert("Invalid Credentials"); return; }
                 currentUser = { ...found, role: "Associate" };
             }
-
             enterDashboard();
         }
 
@@ -228,8 +236,7 @@
             const now = new Date();
             document.getElementById('auth-ui').classList.add('hidden');
             document.getElementById('dashboard').style.display = 'flex';
-            const isHead = currentUser.email === HEAD_EMAIL;
-            document.getElementById('head-only-controls').style.display = isHead ? 'flex' : 'none';
+            document.getElementById('head-only-controls').style.display = currentUser.email === HEAD_EMAIL ? 'flex' : 'none';
             document.getElementById('welcome-msg').innerText = `Hello, ${currentUser.name || currentUser.email.split('@')[0]}`;
             document.getElementById('user-name-label').innerText = currentUser.name || "User";
             document.getElementById('avatar-init').innerText = (currentUser.name || "U").charAt(0).toUpperCase();
@@ -282,38 +289,56 @@
             });
         }
 
-        /* UPDATED CALENDAR LOGIC */
+        /* REAL-TIME CALENDAR LOGIC */
+        function changeMonth(offset) {
+            viewDate.setMonth(viewDate.getMonth() + offset);
+            generateAttendance();
+        }
+
         function generateAttendance() {
             const grid = document.getElementById('cal-grid');
-            const monthHeader = document.getElementById('cal-month-year');
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-            const today = now.getDate();
-
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            monthHeader.innerText = `${monthNames[month]} ${year}`;
-
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const display = document.getElementById('cal-display');
             grid.innerHTML = "";
 
-            for(let i = 1; i <= daysInMonth; i++) {
-                const dateObj = new Date(year, month, i);
-                const dayOfWeek = dateObj.getDay(); // 0 is Sunday, 6 is Saturday
-                const dayEl = document.createElement('div');
-                dayEl.className = "day";
-                
-                if (i === today) dayEl.classList.add('today');
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const today = new Date();
+            
+            display.innerText = viewDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-                let statusColor = "var(--success)"; // Default: Work
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    statusColor = "var(--holiday)"; // Weekend Holiday
-                } else if (i % 12 === 0) {
-                    statusColor = "var(--danger)"; // Simulated Leave
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Gov Holidays (Date strings MM-DD)
+            const holidays = ["0-1", "0-26", "7-15", "9-2", "11-25"]; // Jan 1, Jan 26, Aug 15, Oct 2, Dec 25
+
+            // Empty slots for first week
+            for (let i = 0; i < firstDay; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = "day";
+                const checkDate = new Date(year, month, i);
+                const isToday = checkDate.toDateString() === today.toDateString();
+                
+                if (isToday) dayDiv.classList.add('today');
+
+                let status = 'var(--success)'; // Default Present
+                const dayOfWeek = checkDate.getDay();
+                const holidayKey = `${month}-${i}`;
+
+                if (dayOfWeek === 0 || holidays.includes(holidayKey)) {
+                    status = 'var(--holiday)'; // Weekend/Holiday
+                } else if (checkDate < today && Math.random() < 0.1) {
+                    status = 'var(--danger)'; // Random past leave
+                } else if (checkDate > today) {
+                    status = 'transparent'; // Future
                 }
 
-                dayEl.innerHTML = `${i}<div class="dot" style="background:${statusColor}"></div>`;
-                grid.appendChild(dayEl);
+                dayDiv.innerHTML = `${i}${status !== 'transparent' ? `<div class="dot" style="background:${status}"></div>` : ''}`;
+                grid.appendChild(dayDiv);
             }
         }
 
