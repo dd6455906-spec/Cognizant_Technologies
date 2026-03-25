@@ -32,18 +32,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s; }
         body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-        .auth-card { 
-            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
-            padding: 40px; width: 420px; box-shadow: var(--card-shadow); text-align: center; 
-            position: relative;
-        }
-        
-        .card-toggle {
-            position: absolute; top: 15px; right: 15px;
-            background: var(--bg); border: 1px solid var(--border);
-            color: var(--text); padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
-        }
-
+        .auth-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 40px; width: 420px; box-shadow: var(--card-shadow); text-align: center; position: relative; }
+        .card-toggle { position: absolute; top: 15px; right: 15px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
         .brand-text { color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.75rem; margin-bottom: 10px; display: block; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
         .btn-main { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -52,7 +42,6 @@
         #dashboard { display: none; width: 100%; height: 100%; flex-direction: column; background: var(--bg); }
         nav { padding: 0 30px; height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--glass); border-bottom: 1px solid var(--border); }
         .nav-right { display: flex; align-items: center; gap: 15px; }
-        
         .tabs-bar { display: flex; background: var(--glass); border-bottom: 1px solid var(--border); justify-content: center; }
         .tab-btn { padding: 15px 25px; cursor: pointer; font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; border-bottom: 3px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
@@ -60,7 +49,6 @@
         .content-area { flex: 1; padding: 40px; overflow-y: auto; }
         .tab-panel { display: none; max-width: 1000px; margin: 0 auto; }
         .tab-panel.active { display: block; }
-
         .grid-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
         .widget { background: var(--glass); padding: 25px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--card-shadow); }
         
@@ -71,25 +59,16 @@
         .user-pill { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 15px; background: var(--bg); border-radius: 20px; border: 1px solid var(--border); }
         .avatar { width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 
-        #profile-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; background: var(--glass); border: 1px solid var(--border);
-            border-radius: 20px; padding: 30px; display: none; z-index: 4000; text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-        }
+        #profile-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 30px; display: none; z-index: 4000; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 3500; }
-
         .profile-details { text-align: left; margin: 20px 0; }
         .profile-details p { margin-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
         .profile-details label { font-weight: bold; color: var(--text-dim); display: block; font-size: 0.75rem; text-transform: uppercase; }
 
         .hidden { display: none !important; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-        .task-actions { display: flex; gap: 10px; }
-        .task-actions span { cursor: pointer; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
-        .edit-btn { color: var(--primary); }
-        .delete-btn { color: var(--danger); }
+        .task-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
         .session-info { font-size: 0.75rem; color: var(--text-dim); background: var(--bg); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); }
+        .action-btn { cursor: pointer; margin-left: 10px; font-weight: bold; }
     </style>
 </head>
 <body class="light-mode">
@@ -100,7 +79,7 @@
             <span class="brand-text">COGNIZANT</span>
             <h2>Associate Sign-In</h2>
             <input type="email" id="l-email" placeholder="Corporate Email">
-            <input type="password" id="l-pass" placeholder="Password">
+            <input type="password" id="l-password" placeholder="Password">
             <button class="btn-main" onclick="handleAuth('Login')">Login</button>
             <p style="margin-top:20px; font-size: 0.8rem;">New here? <span onclick="swapAuth()" style="color:var(--primary); cursor:pointer; font-weight:bold;">Register</span></p>
         </div>
@@ -111,7 +90,7 @@
             <h2>Onboarding</h2>
             <input type="text" id="r-name" placeholder="Full Name">
             <input type="email" id="r-email" placeholder="Corporate Email">
-            <input type="password" id="r-pass" placeholder="Password">
+            <input type="password" id="r-password" placeholder="Password">
             <button class="btn-main" onclick="handleAuth('Reg')">Join Portal</button>
             <p style="margin-top:20px; font-size: 0.8rem;">Registered? <span onclick="swapAuth()" style="color:var(--primary); cursor:pointer; font-weight:bold;">Sign In</span></p>
         </div>
@@ -143,11 +122,11 @@
                 <div class="grid-layout">
                     <div class="widget">
                         <h3>Task Snapshot</h3>
-                        <div id="task-summary" style="margin-top: 15px;">Add tasks in the Tasks tab.</div>
+                        <div id="task-summary" style="margin-top: 15px;">Tasks will appear here.</div>
                     </div>
                     <div class="widget">
                         <h3>Status</h3>
-                        <p style="margin-top: 10px;">ID: <span style="color:var(--primary)">#CTS-001</span></p>
+                        <p style="margin-top: 10px;">ID: <span style="color:var(--primary)" id="disp-id">#CTS-001</span></p>
                         <p style="margin-top: 5px;">Status: <span style="color:var(--success)">Active</span></p>
                     </div>
                 </div>
@@ -155,9 +134,9 @@
 
             <div id="task-view" class="tab-panel">
                 <div class="widget">
-                    <h3>Personal Task Manager</h3>
-                    <div style="display: flex; gap: 10px; margin: 20px 0;">
-                        <input type="text" id="new-task-input" placeholder="Enter task..." style="margin:0;">
+                    <h3>Team Task Manager</h3>
+                    <div id="head-only-controls" style="display: flex; gap: 10px; margin: 20px 0;">
+                        <input type="text" id="new-task-input" placeholder="Enter new task..." style="margin:0;">
                         <button class="btn-main" style="width: 120px; margin:0;" onclick="addNewTask()">Add</button>
                     </div>
                     <div id="full-task-list"></div>
@@ -178,22 +157,25 @@
         <div class="avatar" style="width: 60px; height: 60px; margin: 0 auto 15px; font-size: 1.5rem;" id="modal-avatar">U</div>
         <div class="profile-details">
             <p><label>Name</label><span id="p-name">User Name</span></p>
-            <p><label>Employee ID</label><span id="p-id">#CTS-001</span></p>
+            <p><label>Designation</label><span id="p-role">Associate</span></p>
             <p><label>Email ID</label><span id="p-email">user@cognizant.com</span></p>
             <p><label>Login Time</label><span id="p-login-time" style="color:var(--primary)">00:00 AM</span></p>
         </div>
-        <button class="btn-main" onclick="toggleProfile()" style="background: var(--text-dim);">Close</button>
+        <button class="btn-main" onclick="toggleProfile()" style="background: var(--text-dim); margin-top: 10px;">Close</button>
     </div>
 
     <script>
+        const HEAD_EMAIL = "david123.d@gmail.com";
+        const HEAD_PASS = "EmployeeHead123";
+
+        let users = JSON.parse(localStorage.getItem('cts_portal_users')) || [];
+        let sharedTasks = JSON.parse(localStorage.getItem('cts_shared_tasks')) || ["Finalize Project Documentation", "Team Sync @ 2PM"];
         let currentUser = null;
-        let tasks = [];
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
-            const icons = document.querySelectorAll('.card-toggle, #nav-theme-btn');
             const isDark = document.body.classList.contains('dark-mode');
-            icons.forEach(i => i.innerText = isDark ? '☀️' : '🌙');
+            document.querySelectorAll('.card-toggle, #nav-theme-btn').forEach(i => i.innerText = isDark ? '☀️' : '🌙');
         }
 
         function swapAuth() {
@@ -203,38 +185,50 @@
 
         function handleAuth(type) {
             const email = type === 'Reg' ? document.getElementById('r-email').value : document.getElementById('l-email').value;
-            const pass = type === 'Reg' ? document.getElementById('r-pass').value : document.getElementById('l-pass').value;
+            const pass = type === 'Reg' ? document.getElementById('r-password').value : document.getElementById('l-password').value;
             const name = type === 'Reg' ? document.getElementById('r-name').value : "";
 
-            if(!email || !pass) return alert("Fill all fields");
+            if (!email || !pass) { alert("Please fill all fields"); return; }
 
-            let users = JSON.parse(localStorage.getItem('cts_users') || '[]');
-
-            if(type === 'Reg') {
-                if(users.find(u => u.email === email)) return alert("User exists!");
-                users.push({ email, pass, name, tasks: [] });
-                localStorage.setItem('cts_users', JSON.stringify(users));
-                alert("Account Created! Please Login.");
+            if (type === 'Reg') {
+                if (users.find(u => u.email === email)) { alert("Account already exists"); return; }
+                users.push({ name, email, pass, role: "Associate" });
+                localStorage.setItem('cts_portal_users', JSON.stringify(users));
+                alert("Account Created! You can now login.");
                 swapAuth();
                 return;
             }
 
-            const user = users.find(u => u.email === email && u.pass === pass);
-            if(!user) return alert("Invalid Credentials");
+            // Login Logic
+            if (email === HEAD_EMAIL && pass === HEAD_PASS) {
+                currentUser = { name: "David D.", email: HEAD_EMAIL, role: "Head Employee" };
+            } else {
+                const found = users.find(u => u.email === email && u.pass === pass);
+                if (!found) { alert("Invalid Credentials"); return; }
+                currentUser = { ...found, role: "Associate" };
+            }
 
-            currentUser = user;
-            tasks = user.tasks || [];
-            
+            enterDashboard();
+        }
+
+        function enterDashboard() {
             const now = new Date();
             document.getElementById('auth-ui').classList.add('hidden');
             document.getElementById('dashboard').style.display = 'flex';
-            document.getElementById('welcome-msg').innerText = "Hello, " + (user.name || user.email.split('@')[0]);
-            document.getElementById('user-name-label').innerText = user.name || "User";
-            document.getElementById('avatar-init').innerText = (user.name || "U").charAt(0).toUpperCase();
-            document.getElementById('p-name').innerText = user.name || "Associate";
-            document.getElementById('p-email').innerText = user.email;
+            
+            // Permissions
+            const isHead = currentUser.email === HEAD_EMAIL;
+            document.getElementById('head-only-controls').style.display = isHead ? 'flex' : 'none';
+
+            // Profile & UI
+            document.getElementById('welcome-msg').innerText = `Hello, ${currentUser.name || currentUser.email.split('@')[0]}`;
+            document.getElementById('user-name-label').innerText = currentUser.name || "User";
+            document.getElementById('avatar-init').innerText = (currentUser.name || "U").charAt(0).toUpperCase();
+            document.getElementById('p-name').innerText = currentUser.name || "Associate";
+            document.getElementById('p-email').innerText = currentUser.email;
+            document.getElementById('p-role').innerText = currentUser.role;
             document.getElementById('p-login-time').innerText = now.toLocaleTimeString();
-            document.getElementById('modal-avatar').innerText = (user.name || "U").charAt(0).toUpperCase();
+            document.getElementById('modal-avatar').innerText = (currentUser.name || "U").charAt(0).toUpperCase();
 
             setInterval(() => { document.getElementById('nav-time').innerText = new Date().toLocaleTimeString(); }, 1000);
             renderTasks();
@@ -243,49 +237,46 @@
 
         function addNewTask() {
             const input = document.getElementById('new-task-input');
-            if(!input.value) return;
-            tasks.push(input.value);
+            if (!input.value) return;
+            sharedTasks.push(input.value);
             input.value = "";
-            saveUserData();
-            renderTasks();
+            saveTasks();
         }
 
-        function editTask(index) {
-            const newVal = prompt("Edit Task:", tasks[index]);
-            if(newVal !== null && newVal.trim() !== "") {
-                tasks[index] = newVal;
-                saveUserData();
-                renderTasks();
+        function modifyTask(index) {
+            const newVal = prompt("Modify task:", sharedTasks[index]);
+            if (newVal) {
+                sharedTasks[index] = newVal;
+                saveTasks();
             }
         }
 
         function removeTask(index) {
-            tasks.splice(index, 1);
-            saveUserData();
-            renderTasks();
+            sharedTasks.splice(index, 1);
+            saveTasks();
         }
 
-        function saveUserData() {
-            let users = JSON.parse(localStorage.getItem('cts_users'));
-            const idx = users.findIndex(u => u.email === currentUser.email);
-            users[idx].tasks = tasks;
-            localStorage.setItem('cts_users', JSON.stringify(users));
+        function saveTasks() {
+            localStorage.setItem('cts_shared_tasks', JSON.stringify(sharedTasks));
+            renderTasks();
         }
 
         function renderTasks() {
             const fullList = document.getElementById('full-task-list');
-            const summaryList = document.getElementById('task-summary');
+            const summary = document.getElementById('task-summary');
+            const isHead = currentUser.email === HEAD_EMAIL;
+            
             fullList.innerHTML = "";
-            summaryList.innerHTML = tasks.length ? tasks.slice(0, 3).map(t => `• ${t}`).join('<br>') : "No tasks yet.";
+            summary.innerHTML = sharedTasks.length ? sharedTasks.slice(0, 3).map(t => `• ${t}`).join('<br>') : "No active tasks.";
 
-            tasks.forEach((task, index) => {
+            sharedTasks.forEach((task, index) => {
                 const item = document.createElement('div');
                 item.className = "task-item";
-                item.innerHTML = `<span>${task}</span>
-                    <div class="task-actions">
-                        <span class="edit-btn" onclick="editTask(${index})">✎</span>
-                        <span class="delete-btn" onclick="removeTask(${index})">✕</span>
-                    </div>`;
+                let actions = isHead ? `<div>
+                    <span class="action-btn" style="color:var(--primary)" onclick="modifyTask(${index})">✎</span>
+                    <span class="action-btn" style="color:var(--danger)" onclick="removeTask(${index})">✕</span>
+                </div>` : "";
+                item.innerHTML = `<span>${task}</span>${actions}`;
                 fullList.appendChild(item);
             });
         }
@@ -303,17 +294,17 @@
         }
 
         function toggleProfile() {
-            const modal = document.getElementById('profile-modal');
-            const overlay = document.getElementById('overlay');
-            const isVisible = modal.style.display === 'block';
-            modal.style.display = isVisible ? 'none' : 'block';
-            overlay.style.display = isVisible ? 'none' : 'block';
+            const m = document.getElementById('profile-modal');
+            const o = document.getElementById('overlay');
+            const v = m.style.display === 'block';
+            m.style.display = v ? 'none' : 'block';
+            o.style.display = v ? 'none' : 'block';
         }
 
-        function switchTab(e, tabId) {
+        function switchTab(e, id) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            document.getElementById(id).classList.add('active');
             e.currentTarget.classList.add('active');
         }
     </script>
